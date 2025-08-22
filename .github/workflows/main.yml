@@ -26,6 +26,13 @@ jobs:
       run: yarn
     - name: Unit tests
       run: yarn test
+    - name: JUnit Report Action
+      # You may pin to the exact commit or the version.
+      # uses: mikepenz/action-junit-report@3585e9575db828022551b4231f165eb59a0e74e3
+      uses: mikepenz/action-junit-report@v5.6.2
+      with:
+        report_paths: "**/reports/**/*.xml"
+        fail_on_failure: false
     - name: Build
       run: yarn build
     - name: Integration tests
