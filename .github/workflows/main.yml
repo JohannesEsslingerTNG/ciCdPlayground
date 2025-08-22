@@ -4,12 +4,16 @@ on:
   push:
   pull_request:
   workflow_dispatch:
-  
+    inputs:
+      version:
+        description: 'Version number for tagging'
+        required: true
+        type: string
 permissions:
   checks: write
   pull-requests: write
   id-token: write
-  contents: read
+  contents: write
   pages: write
 
 jobs:
@@ -22,6 +26,22 @@ jobs:
     # It is not clear which versions these are, 
     # so it might be a good idea to specify them via an action like actions/setup-node@v4
     - uses: actions/checkout@v4
+      with:
+        fetch-depth: 0  # Required to fetch entire git history
+
+    - name: Configure Git
+      if: ${{ github.event_name == 'workflow_dispatch' }}
+      run: |
+        git config user.name "GitHub Actions"
+        git config user.email "actions@github.com"
+    - name: Create and push version tag
+      if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.version }}
+      run: |
+        git fetch --tags
+        git tag ${{ github.event.inputs.version }}
+        git push origin ${{ github.event.inputs.version }}
+              
+
     - name: Install
       run: yarn
     - name: Unit tests
