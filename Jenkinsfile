@@ -13,7 +13,11 @@ pipeline {
         stage('unit_tests') {
             steps {
                 sh 'yarn test'
-                junit stdioRetention: 'ALL', testResults: '**/reports/**/*.xml'
+            }
+            post {
+                always {
+                    junit stdioRetention: 'ALL', testResults: '**/reports/**/*.xml'
+                }
             }
         }
 
